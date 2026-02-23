@@ -1,0 +1,239 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Partner Connect - Real Estate Channel Partner Management Frontend",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Create partner registration form with validation for name, company, contact, and license information",
+      "acceptanceCriteria": [
+        "Partners can register with required fields: name, company, email, phone, license number",
+        "Registration data is stored in the backend",
+        "Form validation ensures all required fields are filled"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/PartnerRegistrationForm.tsx",
+          "operation": "create",
+          "description": "Create registration form component that collects partner name, company name, contact details (email, phone), and license information. Use the authorization component's saveCallerUserProfile backend capability to store profile data. Include form validation for all required fields. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/RegisterPage.tsx",
+          "operation": "create",
+          "description": "Create registration page that renders PartnerRegistrationForm component and handles successful registration navigation to dashboard"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /register path that renders RegisterPage component and wire registration flow into app routing"
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Build property listing dashboard with filtering and property details display",
+      "acceptanceCriteria": [
+        "Dashboard displays list of properties with key information",
+        "Properties show location, price, property type, and availability status",
+        "Partners can filter or search properties"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/PropertyCard.tsx",
+          "operation": "create",
+          "description": "Create property card component that displays property details (location, price, property type, status). Use generated property placeholder images from frontend/public/assets/generated/property-residential.dim_800x600.png and frontend/public/assets/generated/property-commercial.dim_800x600.png based on property type. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/PropertyList.tsx",
+          "operation": "create",
+          "description": "Create property list component that renders PropertyCard components for each property with filtering and search capabilities for location, type, and status"
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "create",
+          "description": "Create dashboard page that displays hero banner image from frontend/public/assets/generated/hero-banner.dim_1920x600.png and renders PropertyList component. Fetch properties using getProperties backend capability. Use the authorization component to ensure only authenticated users can access this page."
+        },
+        {
+          "path": "frontend/src/hooks/useProperties.ts",
+          "operation": "create",
+          "description": "Create custom hook that fetches properties from backend using getProperties capability with React Query for caching and state management"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /dashboard path that renders DashboardPage component with authentication guard to redirect unauthenticated users to login"
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement lead management with add, track, and status update capabilities",
+      "acceptanceCriteria": [
+        "Partners can add new leads with customer name, contact, interested property, and budget",
+        "Lead status can be tracked (new, contacted, site visit scheduled, negotiation, closed)",
+        "Partners can view all their leads in a list"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AddLeadForm.tsx",
+          "operation": "create",
+          "description": "Create form component to add new leads with customer name field. Use addLead backend capability to submit lead data. Include form validation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/LeadCard.tsx",
+          "operation": "create",
+          "description": "Create lead card component that displays lead information including customer name, status badge with appropriate styling for each status (new, contacted, inProgress, closed)"
+        },
+        {
+          "path": "frontend/src/components/LeadList.tsx",
+          "operation": "create",
+          "description": "Create lead list component that renders LeadCard components for each lead and integrates AddLeadForm for adding new leads"
+        },
+        {
+          "path": "frontend/src/pages/LeadsPage.tsx",
+          "operation": "create",
+          "description": "Create leads page that renders LeadList component. Fetch leads using getLeads backend capability. Use the authorization component to ensure only authenticated users can access their own leads."
+        },
+        {
+          "path": "frontend/src/hooks/useLeads.ts",
+          "operation": "create",
+          "description": "Create custom hook that fetches leads from backend using getLeads capability with React Query for caching and mutations for adding leads"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /leads path that renders LeadsPage component with authentication guard"
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Create commission tracking dashboard showing earned, pending, and payment history",
+      "acceptanceCriteria": [
+        "Dashboard shows total earned commissions and pending payments",
+        "Partners can see commission breakdown by property/deal",
+        "Payment history is accessible with dates and amounts"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CommissionSummary.tsx",
+          "operation": "create",
+          "description": "Create commission summary component that displays total earned commissions and pending amounts with visual cards/stats layout"
+        },
+        {
+          "path": "frontend/src/components/CommissionTable.tsx",
+          "operation": "create",
+          "description": "Create commission table component that displays commission breakdown with columns for amount, status, and payment date. Format currency and dates appropriately."
+        },
+        {
+          "path": "frontend/src/pages/CommissionsPage.tsx",
+          "operation": "create",
+          "description": "Create commissions page that renders CommissionSummary and CommissionTable components. Fetch commissions using getCommissions backend capability. Use the authorization component to ensure only authenticated users can access their commission data."
+        },
+        {
+          "path": "frontend/src/hooks/useCommissions.ts",
+          "operation": "create",
+          "description": "Create custom hook that fetches commissions from backend using getCommissions capability with React Query for caching"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /commissions path that renders CommissionsPage component with authentication guard"
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement Internet Identity authentication with personalized dashboard access",
+      "acceptanceCriteria": [
+        "Partners can log in using Internet Identity",
+        "Each partner sees only their own data after login",
+        "Unauthenticated users are redirected to login"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "create",
+          "description": "Create login/logout button component using the authorization component's useInternetIdentity hook. Handle login, logout, and clear query cache on logout. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "create",
+          "description": "Create modal component that prompts new users to complete their profile with name, company name, contact details, and license information. Use saveCallerUserProfile backend capability. Implement proper loading state handling to prevent modal flash as per authorization component guidelines."
+        },
+        {
+          "path": "frontend/src/hooks/useUserProfile.ts",
+          "operation": "create",
+          "description": "Create custom hook that fetches user profile using getCallerUserProfile backend capability with proper loading state management to prevent profile setup modal flash. Follow authorization component pattern for isFetched and isLoading states."
+        },
+        {
+          "path": "frontend/src/components/AuthGuard.tsx",
+          "operation": "create",
+          "description": "Create authentication guard component that wraps protected routes and redirects unauthenticated users to login page. Use the authorization component's useInternetIdentity hook."
+        },
+        {
+          "path": "frontend/src/pages/LoginPage.tsx",
+          "operation": "create",
+          "description": "Create login page that renders LoginButton component with welcoming messaging and displays partner icon from frontend/public/assets/generated/partner-icon.dim_128x128.png"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for /login path and wrap dashboard, leads, and commissions routes with AuthGuard component. Add ProfileSetupModal at app root level to prompt new authenticated users for profile completion."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Apply professional real estate design theme with warm earth tones and clean layouts",
+      "acceptanceCriteria": [
+        "UI uses a cohesive color palette with warm, professional tones",
+        "Layout is clean, organized, and easy to navigate",
+        "Design conveys trust and suits real estate business context"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Define custom CSS variables for real estate theme with warm earth tones (browns, tans, golds), professional grays, and accent colors. Apply cohesive typography and spacing rules."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Extend Tailwind theme with custom colors for real estate brand palette including primary (warm earth tones), secondary, accent, and neutral colors. Configure typography and spacing for professional layouts."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "create",
+          "description": "Create main layout component with navigation header, sidebar for main sections (Dashboard, Leads, Commissions), and footer. Apply professional real estate styling with clean, organized structure."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap all authenticated routes with Layout component to provide consistent navigation and branding across the application"
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Display generated hero banner and property placeholder images as static assets",
+      "acceptanceCriteria": [
+        "Hero banner image is displayed on the main dashboard",
+        "Property placeholder images are used in property listings",
+        "Images load from static assets directory"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Add hero section that displays the generated hero banner image from frontend/public/assets/generated/hero-banner.dim_1920x600.png with proper responsive styling and overlay text welcoming partners"
+        },
+        {
+          "path": "frontend/src/components/PropertyCard.tsx",
+          "operation": "modify",
+          "description": "Update PropertyCard to display appropriate property placeholder images: frontend/public/assets/generated/property-residential.dim_800x600.png for residential properties and frontend/public/assets/generated/property-commercial.dim_800x600.png for commercial properties based on propertyType field"
+        }
+      ]
+    }
+  ]
+}

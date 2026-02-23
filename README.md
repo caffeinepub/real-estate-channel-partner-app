@@ -1,2 +1,3 @@
-# real-estate-channel-partner-app
-Exported from Caffeine project: Real Estate Channel Partner App
+## Real Estate Channel Partner App
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

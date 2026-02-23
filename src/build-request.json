@@ -1,0 +1,134 @@
+{
+  "kind": "build_request",
+  "title": "Create real estate channel partner management application",
+  "projectName": "Partner Connect",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create a partner registration system where channel partners can sign up with their name, company name, contact details, and license information",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Partners can register with required fields: name, company, email, phone, license number",
+        "Registration data is stored in the backend",
+        "Form validation ensures all required fields are filled"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement a property listing dashboard where partners can view available real estate properties with details like location, price, type, and status",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard displays list of properties with key information",
+        "Properties show location, price, property type, and availability status",
+        "Partners can filter or search properties"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Create a lead management system where partners can add, track, and manage customer leads with status tracking",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Partners can add new leads with customer name, contact, interested property, and budget",
+        "Lead status can be tracked (new, contacted, site visit scheduled, negotiation, closed)",
+        "Partners can view all their leads in a list"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Build a commission tracking feature that shows partners their earned commissions, pending amounts, and payment history",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard shows total earned commissions and pending payments",
+        "Partners can see commission breakdown by property/deal",
+        "Payment history is accessible with dates and amounts"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement partner authentication using Internet Identity so partners can securely log in and access their personalized dashboard",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Partners can log in using Internet Identity",
+        "Each partner sees only their own data after login",
+        "Unauthenticated users are redirected to login"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Create a visually appealing, professional interface with a modern real estate industry aesthetic featuring warm earth tones, clean layouts, and property-focused imagery that conveys trust and professionalism",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "UI uses a cohesive color palette with warm, professional tones",
+        "Layout is clean, organized, and easy to navigate",
+        "Design conveys trust and suits real estate business context"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Display generated hero banner and property placeholder images as static assets from frontend/public/assets/generated",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Hero banner image is displayed on the main dashboard",
+        "Property placeholder images are used in property listings",
+        "Images load from static assets directory"
+      ]
+    }
+  ],
+  "constraints": [
+    "Use Internet Identity for authentication only",
+    "All partner data must be isolated per authenticated user",
+    "Store all business logic in a single Motoko actor"
+  ],
+  "nonGoals": [
+    "Integration with external real estate listing services",
+    "Actual payment processing for commissions",
+    "Multi-language support",
+    "Mobile app development",
+    "Admin panel for property management"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Professional real estate hero banner showing modern buildings and cityscape with warm sunset lighting (hero-banner.dim_1920x600.png)",
+      "Luxury residential property placeholder showing modern house exterior (property-residential.dim_800x600.png)",
+      "Commercial property placeholder showing office building (property-commercial.dim_800x600.png)",
+      "Partner handshake icon illustration representing collaboration (partner-icon.dim_128x128.png)"
+    ],
+    "edits": []
+  }
+}

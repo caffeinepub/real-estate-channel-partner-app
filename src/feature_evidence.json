@@ -1,0 +1,156 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-partner-registration-system-where-channel-partners-can-sign-up-with-their-name-company-name-contact-details-and-license-information",
+      "featureTitle": "Create a partner registration system where channel partners can sign up with their name, company name, contact details, and license information",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-property-listing-dashboard-where-partners-can-view-available-real-estate-properties-with-details-like-location-price-type-and-status",
+      "featureTitle": "Implement a property listing dashboard where partners can view available real estate properties with details like location, price, type, and status",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/PropertyCard.tsx",
+        "frontend/src/components/PropertyList.tsx",
+        "frontend/src/pages/DashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-lead-management-system-where-partners-can-add-track-and-manage-customer-leads-with-status-tracking",
+      "featureTitle": "Create a lead management system where partners can add, track, and manage customer leads with status tracking",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AddLeadForm.tsx",
+        "frontend/src/components/LeadCard.tsx",
+        "frontend/src/components/LeadList.tsx",
+        "frontend/src/pages/LeadsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-commission-tracking-feature-that-shows-partners-their-earned-commissions-pending-amounts-and-payment-history",
+      "featureTitle": "Build a commission tracking feature that shows partners their earned commissions, pending amounts, and payment history",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/CommissionSummary.tsx",
+        "frontend/src/components/CommissionTable.tsx",
+        "frontend/src/pages/CommissionsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-partner-authentication-using-internet-identity-so-partners-can-securely-log-in-and-access-their-personalized-dashboard",
+      "featureTitle": "Implement partner authentication using Internet Identity so partners can securely log in and access their personalized dashboard",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AuthGuard.tsx",
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/pages/LoginPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-visually-appealing-professional-interface-with-a-modern-real-estate-industry-aesthetic-featuring-warm-earth-tones-clean-layouts-and-property-focused-imagery-that-conveys-trust-and-professionalism",
+      "featureTitle": "Create a visually appealing, professional interface with a modern real estate industry aesthetic featuring warm earth tones, clean layouts, and property-focused imagery that conveys trust and professionalism",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-generated-hero-banner-and-property-placeholder-images-as-static-assets-from-frontend-public-assets-generated",
+      "featureTitle": "Display generated hero banner and property placeholder images as static assets from frontend/public/assets/generated",
+      "files": [
+        "frontend/src/components/PropertyCard.tsx",
+        "frontend/src/pages/DashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
