@@ -7,6 +7,13 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface Partner {
+    principal: Principal;
+    name: string;
+    licenseInfo: string;
+    companyName: string;
+    contactDetails: string;
+}
 export interface Lead {
     id: bigint;
     customerName: string;
@@ -15,24 +22,19 @@ export interface Lead {
 }
 export interface Property {
     id: bigint;
-    status: string;
+    status: PropertyStatus;
+    transactionType: TransactionType;
     propertyType: string;
     price: bigint;
     location: string;
+    projectStage: ProjectStage;
 }
 export interface Commission {
     id: bigint;
-    status: string;
+    status: CommissionStatus;
     partnerPrincipal: Principal;
     paymentDate?: bigint;
     amount: bigint;
-}
-export interface Partner {
-    principal: Principal;
-    name: string;
-    licenseInfo: string;
-    companyName: string;
-    contactDetails: string;
 }
 export interface UserProfile {
     name: string;
@@ -40,11 +42,32 @@ export interface UserProfile {
     companyName: string;
     contactDetails: string;
 }
+export enum CommissionStatus {
+    pending = "pending",
+    paid = "paid",
+    earned = "earned"
+}
 export enum LeadStatus {
     new_ = "new",
     closed = "closed",
     contacted = "contacted",
     inProgress = "inProgress"
+}
+export enum ProjectStage {
+    launch = "launch",
+    readyToShift = "readyToShift",
+    preLaunch = "preLaunch"
+}
+export enum PropertyStatus {
+    rented = "rented",
+    sold = "sold",
+    pendingApproval = "pendingApproval",
+    available = "available"
+}
+export enum TransactionType {
+    buy = "buy",
+    rent = "rent",
+    sell = "sell"
 }
 export enum UserRole {
     admin = "admin",
@@ -52,9 +75,10 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addCommission(partnerPrincipal: Principal, amount: bigint, status: string): Promise<void>;
+    addCommission(partnerPrincipal: Principal, amount: bigint, status: CommissionStatus): Promise<void>;
     addLead(customerName: string): Promise<void>;
-    addProperty(location: string, price: bigint, propertyType: string, status: string): Promise<void>;
+    addProperty(location: string, price: bigint, propertyType: string, transactionType: TransactionType, projectStage: ProjectStage): Promise<void>;
+    approveProperty(propertyId: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
@@ -62,9 +86,14 @@ export interface backendInterface {
     getLeads(): Promise<Array<Lead>>;
     getPartnerProfile(): Promise<Partner | null>;
     getProperties(): Promise<Array<Property>>;
+    getPropertiesByProjectStage(projectStage: ProjectStage): Promise<Array<Property>>;
+    getPropertiesByTransactionType(transactionType: TransactionType): Promise<Array<Property>>;
+    getProperty(id: bigint): Promise<Property | null>;
+    getQubeYardsBalance(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     markCommissionPaid(commissionId: bigint, paymentDate: bigint): Promise<void>;
     registerPartner(name: string, companyName: string, contactDetails: string, licenseInfo: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    submitPropertyForApproval(location: string, price: bigint, propertyType: string, transactionType: TransactionType, projectStage: ProjectStage): Promise<void>;
 }

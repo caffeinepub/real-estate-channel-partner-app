@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import LeadsPage from './pages/LeadsPage';
 import CommissionsPage from './pages/CommissionsPage';
+import NewsPage from './pages/NewsPage';
+import AdminPropertiesPage from './pages/AdminPropertiesPage';
 import AuthGuard from './components/AuthGuard';
 import ProfileSetupModal from './components/ProfileSetupModal';
 
@@ -29,35 +31,58 @@ const layoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: 'layout',
   component: () => (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ),
+});
+
+const newsRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: '/news',
+  component: NewsPage,
+});
+
+const authLayoutRoute = createRoute({
+  getParentRoute: () => layoutRoute,
+  id: 'authLayout',
+  component: () => (
     <AuthGuard>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <Outlet />
     </AuthGuard>
   ),
 });
 
 const dashboardRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => authLayoutRoute,
   path: '/dashboard',
   component: DashboardPage,
 });
 
 const leadsRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => authLayoutRoute,
   path: '/leads',
   component: LeadsPage,
 });
 
 const commissionsRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => authLayoutRoute,
   path: '/commissions',
   component: CommissionsPage,
 });
 
+const adminPropertiesRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/admin/properties',
+  component: AdminPropertiesPage,
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
-  layoutRoute.addChildren([dashboardRoute, leadsRoute, commissionsRoute]),
+  layoutRoute.addChildren([
+    newsRoute,
+    authLayoutRoute.addChildren([dashboardRoute, leadsRoute, commissionsRoute, adminPropertiesRoute]),
+  ]),
 ]);
 
 const router = createRouter({ routeTree });
@@ -75,4 +100,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

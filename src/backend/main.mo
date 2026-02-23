@@ -1,13 +1,18 @@
 import List "mo:core/List";
 import Map "mo:core/Map";
-import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
-import MixinAuthorization "authorization/MixinAuthorization";
+import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
+import MixinStorage "blob-storage/Mixin";
+import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+// Specify the data migration function in with-clause
+(with migration = Migration.run)
 actor {
-  // Access Control
+  // Include Storage and Authorization
+  include MixinStorage();
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
@@ -19,15 +24,36 @@ actor {
     licenseInfo : Text;
   };
 
-  type Property = {
+  public type TransactionType = {
+    #buy;
+    #sell;
+    #rent;
+  };
+
+  public type ProjectStage = {
+    #preLaunch;
+    #launch;
+    #readyToShift;
+  };
+
+  public type PropertyStatus = {
+    #available;
+    #sold;
+    #rented;
+    #pendingApproval;
+  };
+
+  public type Property = {
     id : Nat;
     location : Text;
     price : Nat;
     propertyType : Text;
-    status : Text; // e.g., "available", "sold"
+    transactionType : TransactionType;
+    projectStage : ProjectStage;
+    status : PropertyStatus;
   };
 
-  type Partner = {
+  public type Partner = {
     principal : Principal;
     name : Text;
     companyName : Text;
@@ -35,26 +61,37 @@ actor {
     licenseInfo : Text;
   };
 
-  type LeadStatus = {
+  public type LeadStatus = {
     #new;
     #contacted;
     #inProgress;
     #closed;
   };
 
-  type Lead = {
+  public type Lead = {
     id : Nat;
     partnerPrincipal : Principal;
     customerName : Text;
     status : LeadStatus;
   };
 
-  type Commission = {
+  public type CommissionStatus = {
+    #earned;
+    #pending;
+    #paid;
+  };
+
+  public type Commission = {
     id : Nat;
     partnerPrincipal : Principal;
     amount : Nat;
-    status : Text; // "earned", "pending", "paid"
+    status : CommissionStatus;
     paymentDate : ?Int;
+  };
+
+  public type QubeYardsUser = {
+    principal : Principal;
+    balance : Nat;
   };
 
   // Persistent Storage using Maps
@@ -63,11 +100,16 @@ actor {
   let properties = Map.empty<Nat, Property>();
   let leads = Map.empty<Nat, Lead>();
   let commissions = Map.empty<Nat, Commission>();
+  let qubeYardsUsers = Map.empty<Principal, QubeYardsUser>();
 
   // Counter arrays for persistent IDs
   var propertyIdCounter = List.fromArray<Nat>([0]);
   var leadIdCounter = List.fromArray<Nat>([0]);
   var commissionIdCounter = List.fromArray<Nat>([0]);
+
+  // QubeYards currency reward amounts
+  let propertyListingReward = 50;
+  let referralReward = 100;
 
   // User Profile Management (Required by frontend)
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
@@ -124,7 +166,8 @@ actor {
     location : Text,
     price : Nat,
     propertyType : Text,
-    status : Text,
+    transactionType : TransactionType,
+    projectStage : ProjectStage,
   ) : async () {
     // Authorization check for admin only
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
@@ -142,7 +185,9 @@ actor {
       location;
       price;
       propertyType;
-      status;
+      transactionType;
+      projectStage;
+      status = #pendingApproval;
     };
 
     properties.add(currentId, property);
@@ -150,14 +195,117 @@ actor {
     propertyIdCounter := List.fromArray<Nat>([currentId + 1]);
   };
 
-  // Get All Properties (Partners Only)
+  // Submit Property for Approval (Partners Only)
+  public shared ({ caller }) func submitPropertyForApproval(
+    location : Text,
+    price : Nat,
+    propertyType : Text,
+    transactionType : TransactionType,
+    projectStage : ProjectStage,
+  ) : async () {
+    // Only authenticated users (partners) can submit properties
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated partners can submit properties");
+    };
+
+    // Ensure only registered partners can submit properties
+    if (not partners.containsKey(caller)) {
+      Runtime.trap("Unauthorized: Only registered partners can submit properties");
+    };
+
+    // Get the current property ID or default to 0
+    var currentId = 0;
+    if (propertyIdCounter.size() > 0) {
+      currentId := propertyIdCounter.at(0);
+    };
+
+    let property : Property = {
+      id = currentId;
+      location;
+      price;
+      propertyType;
+      transactionType;
+      projectStage;
+      status = #pendingApproval;
+    };
+
+    properties.add(currentId, property);
+    // Increment property ID
+    propertyIdCounter := List.fromArray<Nat>([currentId + 1]);
+
+    // Reward QubeYards currency for successful listing submission
+    rewardQubeYardsBalance(caller, propertyListingReward);
+  };
+
+  // Get Properties by Transaction Type
+  public query ({ caller }) func getPropertiesByTransactionType(transactionType : TransactionType) : async [Property] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated partners can view properties");
+    };
+
+    properties.values().toArray().filter(
+      func(property) {
+        property.transactionType == transactionType and property.status == #available;
+      }
+    );
+  };
+
+  // Get Properties by Project Stage
+  public query ({ caller }) func getPropertiesByProjectStage(projectStage : ProjectStage) : async [Property] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated partners can view properties");
+    };
+
+    properties.values().toArray().filter(
+      func(property) {
+        property.projectStage == projectStage and property.status == #available;
+      }
+    );
+  };
+
+  // Approve Property (Admin Only)
+  public shared ({ caller }) func approveProperty(propertyId : Nat) : async () {
+    // Authorization check for admin only
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can approve properties");
+    };
+
+    switch (properties.get(propertyId)) {
+      case (null) {
+        Runtime.trap("Property not found");
+      };
+      case (?property) {
+        if (property.status != #pendingApproval) {
+          Runtime.trap("Property is not pending approval");
+        };
+
+        let updatedProperty : Property = {
+          id = property.id;
+          location = property.location;
+          price = property.price;
+          propertyType = property.propertyType;
+          transactionType = property.transactionType;
+          projectStage = property.projectStage;
+          status = #available;
+        };
+
+        properties.add(propertyId, updatedProperty);
+      };
+    };
+  };
+
+  // Get All Approved Properties
   public query ({ caller }) func getProperties() : async [Property] {
     // Only authenticated users (partners) can view properties
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated partners can view properties");
     };
 
-    properties.values().toArray();
+    properties.values().toArray().filter(
+      func(property) {
+        property.status == #available;
+      }
+    );
   };
 
   // Add Lead
@@ -168,7 +316,7 @@ actor {
     };
 
     // Ensure only registered partners can add leads
-    if (not (partners.containsKey(caller))) {
+    if (not partners.containsKey(caller)) {
       Runtime.trap("Unauthorized: Only registered partners can add leads");
     };
 
@@ -188,6 +336,9 @@ actor {
     leads.add(currentId, lead);
     // Increment lead ID
     leadIdCounter := List.fromArray<Nat>([currentId + 1]);
+
+    // Reward QubeYards currency for successful referral
+    rewardQubeYardsBalance(caller, referralReward);
   };
 
   // Get Leads for Partner
@@ -208,7 +359,7 @@ actor {
   public shared ({ caller }) func addCommission(
     partnerPrincipal : Principal,
     amount : Nat,
-    status : Text,
+    status : CommissionStatus,
   ) : async () {
     // Authorization check for admin only
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
@@ -264,7 +415,7 @@ actor {
           id = commission.id;
           partnerPrincipal = commission.partnerPrincipal;
           amount = commission.amount;
-          status = "paid";
+          status = #paid;
           paymentDate = ?paymentDate;
         };
         commissions.add(commissionId, updatedCommission);
@@ -280,5 +431,38 @@ actor {
     };
 
     partners.get(caller);
+  };
+
+  // Get QubeYards Balance
+  public query ({ caller }) func getQubeYardsBalance() : async Nat {
+    // Only authenticated users can view their QubeYards balance
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view balance");
+    };
+
+    switch (qubeYardsUsers.get(caller)) {
+      case (null) { 0 };
+      case (?user) { user.balance };
+    };
+  };
+
+  // Internal helper to reward QubeYards balance
+  func rewardQubeYardsBalance(principal : Principal, amount : Nat) {
+    let currentBalance = switch (qubeYardsUsers.get(principal)) {
+      case (null) { 0 };
+      case (?user) { user.balance };
+    };
+
+    let updatedUser : QubeYardsUser = {
+      principal;
+      balance = currentBalance + amount;
+    };
+
+    qubeYardsUsers.add(principal, updatedUser);
+  };
+
+  // New query to get property by id
+  public query ({ caller }) func getProperty(id : Nat) : async ?Property {
+    properties.get(id);
   };
 };

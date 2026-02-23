@@ -8,6 +8,32 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const CommissionStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'paid' : IDL.Null,
+  'earned' : IDL.Null,
+});
+export const TransactionType = IDL.Variant({
+  'buy' : IDL.Null,
+  'rent' : IDL.Null,
+  'sell' : IDL.Null,
+});
+export const ProjectStage = IDL.Variant({
+  'launch' : IDL.Null,
+  'readyToShift' : IDL.Null,
+  'preLaunch' : IDL.Null,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -21,7 +47,7 @@ export const UserProfile = IDL.Record({
 });
 export const Commission = IDL.Record({
   'id' : IDL.Nat,
-  'status' : IDL.Text,
+  'status' : CommissionStatus,
   'partnerPrincipal' : IDL.Principal,
   'paymentDate' : IDL.Opt(IDL.Int),
   'amount' : IDL.Nat,
@@ -45,19 +71,62 @@ export const Partner = IDL.Record({
   'companyName' : IDL.Text,
   'contactDetails' : IDL.Text,
 });
+export const PropertyStatus = IDL.Variant({
+  'rented' : IDL.Null,
+  'sold' : IDL.Null,
+  'pendingApproval' : IDL.Null,
+  'available' : IDL.Null,
+});
 export const Property = IDL.Record({
   'id' : IDL.Nat,
-  'status' : IDL.Text,
+  'status' : PropertyStatus,
+  'transactionType' : TransactionType,
   'propertyType' : IDL.Text,
   'price' : IDL.Nat,
   'location' : IDL.Text,
+  'projectStage' : ProjectStage,
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addCommission' : IDL.Func([IDL.Principal, IDL.Nat, IDL.Text], [], []),
+  'addCommission' : IDL.Func(
+      [IDL.Principal, IDL.Nat, CommissionStatus],
+      [],
+      [],
+    ),
   'addLead' : IDL.Func([IDL.Text], [], []),
-  'addProperty' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text, IDL.Text], [], []),
+  'addProperty' : IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Text, TransactionType, ProjectStage],
+      [],
+      [],
+    ),
+  'approveProperty' : IDL.Func([IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -65,6 +134,18 @@ export const idlService = IDL.Service({
   'getLeads' : IDL.Func([], [IDL.Vec(Lead)], ['query']),
   'getPartnerProfile' : IDL.Func([], [IDL.Opt(Partner)], ['query']),
   'getProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
+  'getPropertiesByProjectStage' : IDL.Func(
+      [ProjectStage],
+      [IDL.Vec(Property)],
+      ['query'],
+    ),
+  'getPropertiesByTransactionType' : IDL.Func(
+      [TransactionType],
+      [IDL.Vec(Property)],
+      ['query'],
+    ),
+  'getProperty' : IDL.Func([IDL.Nat], [IDL.Opt(Property)], ['query']),
+  'getQubeYardsBalance' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -78,11 +159,42 @@ export const idlService = IDL.Service({
       [],
     ),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'submitPropertyForApproval' : IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Text, TransactionType, ProjectStage],
+      [],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const CommissionStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'paid' : IDL.Null,
+    'earned' : IDL.Null,
+  });
+  const TransactionType = IDL.Variant({
+    'buy' : IDL.Null,
+    'rent' : IDL.Null,
+    'sell' : IDL.Null,
+  });
+  const ProjectStage = IDL.Variant({
+    'launch' : IDL.Null,
+    'readyToShift' : IDL.Null,
+    'preLaunch' : IDL.Null,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -96,7 +208,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Commission = IDL.Record({
     'id' : IDL.Nat,
-    'status' : IDL.Text,
+    'status' : CommissionStatus,
     'partnerPrincipal' : IDL.Principal,
     'paymentDate' : IDL.Opt(IDL.Int),
     'amount' : IDL.Nat,
@@ -120,19 +232,62 @@ export const idlFactory = ({ IDL }) => {
     'companyName' : IDL.Text,
     'contactDetails' : IDL.Text,
   });
+  const PropertyStatus = IDL.Variant({
+    'rented' : IDL.Null,
+    'sold' : IDL.Null,
+    'pendingApproval' : IDL.Null,
+    'available' : IDL.Null,
+  });
   const Property = IDL.Record({
     'id' : IDL.Nat,
-    'status' : IDL.Text,
+    'status' : PropertyStatus,
+    'transactionType' : TransactionType,
     'propertyType' : IDL.Text,
     'price' : IDL.Nat,
     'location' : IDL.Text,
+    'projectStage' : ProjectStage,
   });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addCommission' : IDL.Func([IDL.Principal, IDL.Nat, IDL.Text], [], []),
+    'addCommission' : IDL.Func(
+        [IDL.Principal, IDL.Nat, CommissionStatus],
+        [],
+        [],
+      ),
     'addLead' : IDL.Func([IDL.Text], [], []),
-    'addProperty' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text, IDL.Text], [], []),
+    'addProperty' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Text, TransactionType, ProjectStage],
+        [],
+        [],
+      ),
+    'approveProperty' : IDL.Func([IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -140,6 +295,18 @@ export const idlFactory = ({ IDL }) => {
     'getLeads' : IDL.Func([], [IDL.Vec(Lead)], ['query']),
     'getPartnerProfile' : IDL.Func([], [IDL.Opt(Partner)], ['query']),
     'getProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
+    'getPropertiesByProjectStage' : IDL.Func(
+        [ProjectStage],
+        [IDL.Vec(Property)],
+        ['query'],
+      ),
+    'getPropertiesByTransactionType' : IDL.Func(
+        [TransactionType],
+        [IDL.Vec(Property)],
+        ['query'],
+      ),
+    'getProperty' : IDL.Func([IDL.Nat], [IDL.Opt(Property)], ['query']),
+    'getQubeYardsBalance' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -153,6 +320,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'submitPropertyForApproval' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Text, TransactionType, ProjectStage],
+        [],
+        [],
+      ),
   });
 };
 

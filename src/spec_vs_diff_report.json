@@ -1,83 +1,60 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T19:52:27.048Z",
-  "summary": "The implementation covers most requirements with authentication, property listings, lead management, commission tracking, and UI design. However, partner registration flow is incomplete, property search/filter functionality is missing some requirements, lead status tracking lacks full status options, and commission breakdown details are not fully implemented.",
+  "generatedAt": "2026-02-23T20:26:17.065Z",
+  "summary": "The implementation successfully delivers most core requirements including transaction types, pan-India location support, project stage categorization, admin approval workflow, news section, QubeYards currency system, partner role restrictions, and premium branding with teal/gold design. However, some specific acceptance criteria are partially implemented or lack complete evidence in the diff.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Partners can register with required fields: name, company, email, phone, license number",
-      "reason": "ProfileSetupModal collects name, companyName, contactDetails, and licenseInfo, but does not separately capture email and phone as distinct validated fields. The contactDetails field is a single text input, not structured email/phone fields.",
-      "evidence": [
-        "frontend/src/components/ProfileSetupModal.tsx"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Partners can filter or search properties",
-      "reason": "PropertyList implements search by location and filters by type/status, but the backend getProperties query does not show evidence of server-side filtering support. The filtering is client-side only.",
-      "evidence": [
-        "frontend/src/components/PropertyList.tsx",
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "requirement": "Lead status can be tracked (new, contacted, site visit scheduled, negotiation, closed)",
-      "reason": "Backend defines LeadStatus with values: new, contacted, inProgress, closed. This does not include 'site visit scheduled' or 'negotiation' as separate status options.",
+      "id": "REQ-12",
+      "requirement": "Only admins can edit any property details",
+      "reason": "While admin approval is implemented, there is no evidence of an admin-only property edit function in the backend or frontend",
       "evidence": [
         "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-3",
-      "requirement": "Partners can add new leads with customer name, contact, interested property, and budget",
-      "reason": "AddLeadForm only captures customerName. No fields exist for contact information, interested property, or budget.",
+      "id": "REQ-13",
+      "requirement": "Property submitters can see their pending submissions",
+      "reason": "The PropertyList filters properties but no evidence shows filtering to display only the caller's own pending submissions",
       "evidence": [
-        "frontend/src/components/AddLeadForm.tsx",
+        "frontend/src/components/PropertyList.tsx"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "requirement": "Currency transactions are logged with timestamps and reasons",
+      "reason": "The backend tracks QubeYards balance but there is no evidence of a transaction log structure with timestamps and reasons for each transaction",
+      "evidence": [
         "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Partners can see commission breakdown by property/deal",
-      "reason": "Commission type does not include property or deal identifiers. CommissionTable displays amount, status, and paymentDate, but no property/deal breakdown is shown.",
+      "id": "REQ-16",
+      "requirement": "Recent currency transactions are listed with details",
+      "reason": "CurrencyBalanceCard displays the balance but does not show a list of recent transactions with details",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/components/CommissionTable.tsx"
+        "frontend/src/components/CurrencyBalanceCard.tsx"
       ]
     }
   ],
   "hallucinated_features": [],
-  "confidence": 0.85,
+  "confidence": 0.82,
   "changed_files": [
-    "all_files_summary.json",
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
     "frontend/index.html",
     "frontend/src/App.tsx",
-    "frontend/src/components/AddLeadForm.tsx",
-    "frontend/src/components/AuthGuard.tsx",
-    "frontend/src/components/CommissionSummary.tsx",
-    "frontend/src/components/CommissionTable.tsx",
+    "frontend/src/components/CurrencyBalanceCard.tsx",
     "frontend/src/components/Layout.tsx",
-    "frontend/src/components/LeadCard.tsx",
-    "frontend/src/components/LeadList.tsx",
-    "frontend/src/components/LoginButton.tsx",
-    "frontend/src/components/ProfileSetupModal.tsx",
     "frontend/src/components/PropertyCard.tsx",
     "frontend/src/components/PropertyList.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
     "frontend/src/hooks/useQueries.ts",
     "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/CommissionsPage.tsx",
+    "frontend/src/pages/AdminPropertiesPage.tsx",
     "frontend/src/pages/DashboardPage.tsx",
-    "frontend/src/pages/LeadsPage.tsx",
     "frontend/src/pages/LoginPage.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/pages/NewsPage.tsx",
     "frontend/tailwind.config.js",
     "project_state.json"
   ]

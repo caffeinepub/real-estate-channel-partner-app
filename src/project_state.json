@@ -1,11 +1,15 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "Real estate channel partner management application",
-  "architectural_notes": [],
+  "projectStateVersion": 5,
+  "summary": "QubeYards real estate platform with buy/sell/rent listings, admin-controlled property approvals, news/magazine section, channel partner system with currency rewards for referrals",
+  "architectural_notes": [
+    "Admin role with exclusive property approval/edit permissions required",
+    "Currency/rewards system for partner referrals and listings",
+    "Role-based access control: public users, channel partners, admin"
+  ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Professional real estate hero banner showing modern buildings and cityscape with warm sunset lighting (hero-banner.dim_1920x600.png)\n- Luxury residential property placeholder showing modern house exterior (property-residential.dim_800x600.png)\n- Commercial property placeholder showing office building (property-commercial.dim_800x600.png)\n- Partner handshake icon illustration representing collaboration (partner-icon.dim_128x128.png)",
+  "imageRequirements": "## Required Images\n- QubeYards company logo with modern real estate aesthetic in teal and gold colors (qubeyards-logo.dim_200x80.png)\n- Luxury real estate hero banner showing premium property with modern architecture (hero-luxury.dim_1920x600.png)\n- News and magazine section header image with real estate theme (news-header.dim_1200x400.png)\n- QubeYards currency coin icon in gold with company branding (currency-icon.dim_128x128.png)",
   "existing_features": [
     {
       "id": "feature-create-a-partner-registration-system-where-channel-partners-can-sign-up-with-their-name-company-name-contact-details-and-license-information",
@@ -62,9 +66,148 @@
         "REQ-7"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-pan-india-location-support-by-updating-property-location-field-to-accept-any-indian-city-state-and-display-pan-india-coverage-in-the-ui",
+      "title": "Add pan-India location support by updating property location field to accept any Indian city/state and display pan-India coverage in the UI",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-offers-display-section-on-the-main-dashboard-showing-a-single-prominent-offer-line-that-highlights-current-deals-or-promotions",
+      "title": "Create an offers display section on the main dashboard showing a single prominent offer line that highlights current deals or promotions",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-project-stage-categorization-pre-launch-launch-ready-to-shift-to-property-data-model-and-implement-filtering-by-project-stage-in-the-property-listing-interface",
+      "title": "Add project stage categorization (pre-launch, launch, ready-to-shift) to property data model and implement filtering by project stage in the property listing interface",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-property-approval-workflow-where-new-property-listings-require-admin-approval-before-becoming-visible-to-all-users-with-pending-status-for-unapproved-properties",
+      "title": "Add property approval workflow where new property listings require admin approval before becoming visible to all users, with pending status for unapproved properties",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-news-and-magazine-section-accessible-from-main-navigation-that-displays-real-estate-news-articles-industry-updates-and-magazine-style-content",
+      "title": "Create a news and magazine section accessible from main navigation that displays real estate news articles, industry updates, and magazine-style content",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-qubeyards-currency-balance-prominently-in-the-partner-s-dashboard-and-profile-showing-total-earned-currency-and-recent-currency-transactions",
+      "title": "Display QubeYards currency balance prominently in the partner's dashboard and profile, showing total earned currency and recent currency transactions",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restrict-channel-partner-features-qubeyards-partner-section-so-that-only-authenticated-users-with-partner-role-can-access-partner-specific-functionality-like-property-listing-submission-and-currency-tracking",
+      "title": "Restrict channel partner features (QubeYards Partner section) so that only authenticated users with partner role can access partner-specific functionality like property listing submission and currency tracking",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-branding-throughout-the-application-to-use-qubeyards-name-logo-and-identity-consistently-across-all-pages-navigation-and-communications",
+      "title": "Update branding throughout the application to use QubeYards name, logo, and identity consistently across all pages, navigation, and communications",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-modern-premium-visual-design-system-for-qubeyards-with-a-sophisticated-color-palette-featuring-deep-teals-golds-and-whites-that-conveys-luxury-real-estate-brand-positioning-with-clean-typography-and-professional-property-imagery",
+      "title": "Create a modern, premium visual design system for QubeYards with a sophisticated color palette featuring deep teals, golds, and whites that conveys luxury real estate brand positioning with clean typography and professional property imagery",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Implement buy, sell, rent property transaction types with pan-India coverage",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add offers display section on main interface",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Create property categorization: pre-launch, launch, ready-to-shift projects",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Implement admin-only approval and edit system for property listings",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add news/magazine section for real estate content",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Create channel partner (QubeYards Partner) section accessible only to partners",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Implement QubeYards currency reward system for property listings and referrals displayed in partner ID",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Add transaction type field (buy, sell, rent) to property data model in backend and update all property-related functions to support this field",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Implement admin role system in backend with functions to designate admin users and restrict property approval and edit operations to admin role only",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Implement QubeYards currency reward system in backend that tracks and awards currency points to partners when they list properties or provide referrals",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    }
+  ],
   "projectName": "Real Estate Channel Partner App",
   "clarification_mode": "instant",
   "clarification_rounds": 0

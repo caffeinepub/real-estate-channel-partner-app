@@ -12,11 +12,14 @@ import type { Principal } from '@icp-sdk/core/principal';
 
 export interface Commission {
   'id' : bigint,
-  'status' : string,
+  'status' : CommissionStatus,
   'partnerPrincipal' : Principal,
   'paymentDate' : [] | [bigint],
   'amount' : bigint,
 }
+export type CommissionStatus = { 'pending' : null } |
+  { 'paid' : null } |
+  { 'earned' : null };
 export interface Lead {
   'id' : bigint,
   'customerName' : string,
@@ -34,13 +37,25 @@ export interface Partner {
   'companyName' : string,
   'contactDetails' : string,
 }
+export type ProjectStage = { 'launch' : null } |
+  { 'readyToShift' : null } |
+  { 'preLaunch' : null };
 export interface Property {
   'id' : bigint,
-  'status' : string,
+  'status' : PropertyStatus,
+  'transactionType' : TransactionType,
   'propertyType' : string,
   'price' : bigint,
   'location' : string,
+  'projectStage' : ProjectStage,
 }
+export type PropertyStatus = { 'rented' : null } |
+  { 'sold' : null } |
+  { 'pendingApproval' : null } |
+  { 'available' : null };
+export type TransactionType = { 'buy' : null } |
+  { 'rent' : null } |
+  { 'sell' : null };
 export interface UserProfile {
   'name' : string,
   'licenseInfo' : string,
@@ -50,11 +65,44 @@ export interface UserProfile {
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addCommission' : ActorMethod<[Principal, bigint, string], undefined>,
+  'addCommission' : ActorMethod<
+    [Principal, bigint, CommissionStatus],
+    undefined
+  >,
   'addLead' : ActorMethod<[string], undefined>,
-  'addProperty' : ActorMethod<[string, bigint, string, string], undefined>,
+  'addProperty' : ActorMethod<
+    [string, bigint, string, TransactionType, ProjectStage],
+    undefined
+  >,
+  'approveProperty' : ActorMethod<[bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
@@ -62,11 +110,22 @@ export interface _SERVICE {
   'getLeads' : ActorMethod<[], Array<Lead>>,
   'getPartnerProfile' : ActorMethod<[], [] | [Partner]>,
   'getProperties' : ActorMethod<[], Array<Property>>,
+  'getPropertiesByProjectStage' : ActorMethod<[ProjectStage], Array<Property>>,
+  'getPropertiesByTransactionType' : ActorMethod<
+    [TransactionType],
+    Array<Property>
+  >,
+  'getProperty' : ActorMethod<[bigint], [] | [Property]>,
+  'getQubeYardsBalance' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'markCommissionPaid' : ActorMethod<[bigint, bigint], undefined>,
   'registerPartner' : ActorMethod<[string, string, string, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'submitPropertyForApproval' : ActorMethod<
+    [string, bigint, string, TransactionType, ProjectStage],
+    undefined
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

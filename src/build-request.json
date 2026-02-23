@@ -1,133 +1,258 @@
 {
   "kind": "build_request",
-  "title": "Create real estate channel partner management application",
-  "projectName": "Partner Connect",
+  "title": "Transform into QubeYards real estate platform with buy/sell/rent, admin approvals, news section, and partner currency rewards",
+  "projectName": "QubeYards",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Create a partner registration system where channel partners can sign up with their name, company name, contact details, and license information",
-      "target": "both",
+      "id": "REQ-8",
+      "text": "Add transaction type field (buy, sell, rent) to property data model in backend and update all property-related functions to support this field",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-5"
+        ],
+        "quotes": [
+          "buy, sell, rent"
         ]
       },
       "acceptanceCriteria": [
-        "Partners can register with required fields: name, company, email, phone, license number",
-        "Registration data is stored in the backend",
-        "Form validation ensures all required fields are filled"
+        "Property type includes transaction type field with options: buy, sell, rent",
+        "All existing property functions handle transaction type correctly",
+        "Transaction type is required when creating or updating properties"
       ]
     },
     {
-      "id": "REQ-2",
-      "text": "Implement a property listing dashboard where partners can view available real estate properties with details like location, price, type, and status",
+      "id": "REQ-9",
+      "text": "Add pan-India location support by updating property location field to accept any Indian city/state and display pan-India coverage in the UI",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-5"
+        ],
+        "quotes": [
+          "pan india hona chahiye"
         ]
       },
       "acceptanceCriteria": [
-        "Dashboard displays list of properties with key information",
-        "Properties show location, price, property type, and availability status",
-        "Partners can filter or search properties"
+        "Properties can be listed from any location in India",
+        "Location filter supports Indian cities and states",
+        "UI indicates pan-India coverage availability"
       ]
     },
     {
-      "id": "REQ-3",
-      "text": "Create a lead management system where partners can add, track, and manage customer leads with status tracking",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Partners can add new leads with customer name, contact, interested property, and budget",
-        "Lead status can be tracked (new, contacted, site visit scheduled, negotiation, closed)",
-        "Partners can view all their leads in a list"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Build a commission tracking feature that shows partners their earned commissions, pending amounts, and payment history",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Dashboard shows total earned commissions and pending payments",
-        "Partners can see commission breakdown by property/deal",
-        "Payment history is accessible with dates and amounts"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Implement partner authentication using Internet Identity so partners can securely log in and access their personalized dashboard",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Partners can log in using Internet Identity",
-        "Each partner sees only their own data after login",
-        "Unauthenticated users are redirected to login"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Create a visually appealing, professional interface with a modern real estate industry aesthetic featuring warm earth tones, clean layouts, and property-focused imagery that conveys trust and professionalism",
+      "id": "REQ-10",
+      "text": "Create an offers display section on the main dashboard showing a single prominent offer line that highlights current deals or promotions",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-5"
+        ],
+        "quotes": [
+          "offers ki ek line honi chahiye"
         ]
       },
       "acceptanceCriteria": [
-        "UI uses a cohesive color palette with warm, professional tones",
-        "Layout is clean, organized, and easy to navigate",
-        "Design conveys trust and suits real estate business context"
+        "Offers section is visible on the main dashboard",
+        "Display shows one prominent offer line",
+        "Offer text is clear and attention-grabbing"
       ]
     },
     {
-      "id": "REQ-7",
-      "text": "Display generated hero banner and property placeholder images as static assets from frontend/public/assets/generated",
-      "target": "frontend",
+      "id": "REQ-11",
+      "text": "Add project stage categorization (pre-launch, launch, ready-to-shift) to property data model and implement filtering by project stage in the property listing interface",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-5"
+        ],
+        "quotes": [
+          "pre launch project launch project, ready to shift project"
         ]
       },
       "acceptanceCriteria": [
-        "Hero banner image is displayed on the main dashboard",
-        "Property placeholder images are used in property listings",
-        "Images load from static assets directory"
+        "Property model includes project stage field with options: pre-launch, launch, ready-to-shift",
+        "Property list can be filtered by project stage",
+        "Project stage is displayed on property cards",
+        "All three stages are selectable in filters"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Implement admin role system in backend with functions to designate admin users and restrict property approval and edit operations to admin role only",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "approval or edit ka option sirf admin par he ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin role is defined in backend user system",
+        "Only admins can approve pending property listings",
+        "Only admins can edit any property details",
+        "Non-admin users receive error when attempting admin operations"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Add property approval workflow where new property listings require admin approval before becoming visible to all users, with pending status for unapproved properties",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "project list koi bhi kare but approval or edit ka option sirf admin par he ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New property listings start in pending approval status",
+        "Admins see a list of pending properties requiring approval",
+        "Approved properties become visible in main property list",
+        "Property submitters can see their pending submissions"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Create a news and magazine section accessible from main navigation that displays real estate news articles, industry updates, and magazine-style content",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "hamare news magine ka option ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "News/Magazine link appears in main navigation",
+        "News section displays articles in magazine-style layout",
+        "Articles include headlines, images, and publication dates",
+        "Content is organized and easy to browse"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Implement QubeYards currency reward system in backend that tracks and awards currency points to partners when they list properties or provide referrals",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Jo property list karega ya refrance dega usko QubeYards currency show hogi uski id m"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Partner profile includes QubeYards currency balance field",
+        "Currency is awarded when partner lists a property",
+        "Currency is awarded when partner provides a referral",
+        "Currency transactions are logged with timestamps and reasons"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Display QubeYards currency balance prominently in the partner's dashboard and profile, showing total earned currency and recent currency transactions",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "QubeYards currency show hogi uski id m"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Currency balance is visible on partner dashboard",
+        "Balance shows total QubeYards currency earned",
+        "Recent currency transactions are listed with details",
+        "Currency icon or branding is used consistently"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Restrict channel partner features (QubeYards Partner section) so that only authenticated users with partner role can access partner-specific functionality like property listing submission and currency tracking",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "channel partner (QubeYards partner) ka option ho ye sirf channel partner ke liye hoga"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Partner-specific features require partner role authentication",
+        "Non-partners cannot access partner dashboard sections",
+        "Partner role is assigned during registration or by admin",
+        "Role-based access control is enforced on backend"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Update branding throughout the application to use QubeYards name, logo, and identity consistently across all pages, navigation, and communications",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "QubeYards name se ek real estate company ka app banao"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App name is QubeYards across all pages",
+        "Navigation and footer display QubeYards branding",
+        "Page titles and metadata reference QubeYards",
+        "Consistent brand identity is maintained"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Create a modern, premium visual design system for QubeYards with a sophisticated color palette featuring deep teals, golds, and whites that conveys luxury real estate brand positioning with clean typography and professional property imagery",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "best app banao"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Color scheme uses premium teal, gold, and white tones",
+        "Typography is clean and professional",
+        "Layout feels luxurious and modern",
+        "Design conveys trust and sophistication",
+        "Visual hierarchy guides user attention effectively"
       ]
     }
   ],
   "constraints": [
-    "Use Internet Identity for authentication only",
-    "All partner data must be isolated per authenticated user",
-    "Store all business logic in a single Motoko actor"
+    "Admin role must be enforced at backend level, not just UI",
+    "Property approval workflow must prevent unapproved listings from appearing in public property list",
+    "Partner authentication must use Internet Identity system already implemented",
+    "QubeYards currency system must track all transactions with audit trail",
+    "Do not modify Internet Identity authentication implementation in frontend/src/hooks/useInternetIdentity.ts"
   ],
   "nonGoals": [
-    "Integration with external real estate listing services",
-    "Actual payment processing for commissions",
-    "Multi-language support",
+    "Integration with external payment gateways",
+    "Real-time chat or messaging between partners and users",
     "Mobile app development",
-    "Admin panel for property management"
+    "Third-party authentication providers",
+    "SMS or email notification services",
+    "Map integration or GPS features",
+    "Social media API integration"
   ],
   "imageRequirements": {
     "required": [
-      "Professional real estate hero banner showing modern buildings and cityscape with warm sunset lighting (hero-banner.dim_1920x600.png)",
-      "Luxury residential property placeholder showing modern house exterior (property-residential.dim_800x600.png)",
-      "Commercial property placeholder showing office building (property-commercial.dim_800x600.png)",
-      "Partner handshake icon illustration representing collaboration (partner-icon.dim_128x128.png)"
+      "QubeYards company logo with modern real estate aesthetic in teal and gold colors (qubeyards-logo.dim_200x80.png)",
+      "Luxury real estate hero banner showing premium property with modern architecture (hero-luxury.dim_1920x600.png)",
+      "News and magazine section header image with real estate theme (news-header.dim_1200x400.png)",
+      "QubeYards currency coin icon in gold with company branding (currency-icon.dim_128x128.png)"
     ],
     "edits": []
   }

@@ -1,237 +1,257 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Partner Connect - Real Estate Channel Partner Management Frontend",
+  "title": "QubeYards Real Estate Platform Frontend - Property Transactions, Admin UI, News Section, and Partner Currency",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Create partner registration form with validation for name, company, contact, and license information",
+      "id": "REQ-9",
+      "summary": "Add pan-India location support with UI indicators and filtering for any Indian city or state",
       "acceptanceCriteria": [
-        "Partners can register with required fields: name, company, email, phone, license number",
-        "Registration data is stored in the backend",
-        "Form validation ensures all required fields are filled"
+        "Properties can be listed from any location in India",
+        "Location filter supports Indian cities and states",
+        "UI indicates pan-India coverage availability"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/PartnerRegistrationForm.tsx",
-          "operation": "create",
-          "description": "Create registration form component that collects partner name, company name, contact details (email, phone), and license information. Use the authorization component's saveCallerUserProfile backend capability to store profile data. Include form validation for all required fields. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/RegisterPage.tsx",
-          "operation": "create",
-          "description": "Create registration page that renders PartnerRegistrationForm component and handles successful registration navigation to dashboard"
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/PropertyList.tsx",
           "operation": "modify",
-          "description": "Add route for /register path that renders RegisterPage component and wire registration flow into app routing"
+          "description": "Update location search filter to support Indian cities and states with improved placeholder text indicating pan-India coverage (e.g., 'Search by city or state (Pan-India)'). Ensure the location filter correctly handles property location values passed from backend."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Add a visual indicator or badge near the property statistics section that highlights pan-India coverage availability (e.g., 'Properties available across India')."
         }
       ]
     },
     {
-      "id": "REQ-2",
-      "summary": "Build property listing dashboard with filtering and property details display",
+      "id": "REQ-10",
+      "summary": "Create an offers display section on the main dashboard showing a single prominent offer line",
       "acceptanceCriteria": [
-        "Dashboard displays list of properties with key information",
-        "Properties show location, price, property type, and availability status",
-        "Partners can filter or search properties"
+        "Offers section is visible on the main dashboard",
+        "Display shows one prominent offer line",
+        "Offer text is clear and attention-grabbing"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Add an offers banner section between the hero banner and property statistics that displays a single prominent offer line with attention-grabbing styling using QubeYards brand colors. Position it prominently at the top of the page content."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Add project stage categorization (pre-launch, launch, ready-to-shift) to property listing interface with filtering",
+      "acceptanceCriteria": [
+        "Property model includes project stage field with options: pre-launch, launch, ready-to-shift",
+        "Property list can be filtered by project stage",
+        "Project stage is displayed on property cards",
+        "All three stages are selectable in filters"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/PropertyCard.tsx",
-          "operation": "create",
-          "description": "Create property card component that displays property details (location, price, property type, status). Use generated property placeholder images from frontend/public/assets/generated/property-residential.dim_800x600.png and frontend/public/assets/generated/property-commercial.dim_800x600.png based on property type. Verify the component's usage instructions before implementing."
+          "operation": "modify",
+          "description": "Display the projectStage field from the Property type (which includes preLaunch, launch, readyToShift values) as a badge or label on each property card with appropriate styling and human-readable labels (e.g., 'Pre-Launch', 'Launch', 'Ready to Shift')."
         },
         {
           "path": "frontend/src/components/PropertyList.tsx",
+          "operation": "modify",
+          "description": "Add a project stage filter dropdown with options for pre-launch, launch, and ready-to-shift. Use the getPropertiesByProjectStage backend capability when a specific stage is selected. Display all three stage options with clear labels."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add a useGetPropertiesByProjectStage query hook that calls actor.getPropertiesByProjectStage(projectStage) to support filtered property retrieval by project stage."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Add property approval workflow UI where new property listings show pending status and admins can approve properties",
+      "acceptanceCriteria": [
+        "New property listings start in pending approval status",
+        "Admins see a list of pending properties requiring approval",
+        "Approved properties become visible in main property list",
+        "Property submitters can see their pending submissions"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/PropertyCard.tsx",
+          "operation": "modify",
+          "description": "Display the status field from Property type including pendingApproval status with a distinct visual indicator (e.g., yellow badge). For admin users, add an 'Approve' button on pendingApproval properties that calls the approveProperty backend capability."
+        },
+        {
+          "path": "frontend/src/pages/AdminPropertiesPage.tsx",
           "operation": "create",
-          "description": "Create property list component that renders PropertyCard components for each property with filtering and search capabilities for location, type, and status"
+          "description": "Create an admin-only page that displays properties with pendingApproval status in a dedicated view. Include approve action buttons that trigger actor.approveProperty(propertyId). Use the authorization component to enforce admin-only access by checking isCallerAdmin() and showing an access denied message for non-admins. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/PropertyList.tsx",
+          "operation": "modify",
+          "description": "Filter the displayed properties to exclude pendingApproval status for non-admin users. For admin users, show all properties including pending ones or provide a toggle to view pending properties separately."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useApproveProperty mutation hook that calls actor.approveProperty(propertyId) and invalidates the properties query cache on success. Add useIsCallerAdmin query hook that calls actor.isCallerAdmin() to determine admin status."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for '/admin/properties' that renders AdminPropertiesPage component. Ensure this route is wrapped with authentication guard."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add a conditional navigation link 'Pending Approvals' to the header that appears only for admin users (checked via useIsCallerAdmin hook) and routes to '/admin/properties'."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Create a news and magazine section accessible from main navigation that displays real estate news articles",
+      "acceptanceCriteria": [
+        "News/Magazine link appears in main navigation",
+        "News section displays articles in magazine-style layout",
+        "Articles include headlines, images, and publication dates",
+        "Content is organized and easy to browse"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/NewsPage.tsx",
+          "operation": "create",
+          "description": "Create a news and magazine section page with a magazine-style layout displaying real estate news articles. Include the generated header image from frontend/public/assets/generated/news-header.dim_1200x400.png. Display articles with headlines, placeholder images, and publication dates. Use a grid layout for article cards with modern, browsable design suitable for QubeYards branding."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for '/news' that renders the NewsPage component. Ensure it is accessible to all users (no authentication required)."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add a 'News & Magazine' link in the main navigation header that routes to '/news'. Position it prominently alongside existing Dashboard, Leads, and Commissions links."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Display QubeYards currency balance prominently in partner dashboard showing total earned currency and recent transactions",
+      "acceptanceCriteria": [
+        "Currency balance is visible on partner dashboard",
+        "Balance shows total QubeYards currency earned",
+        "Recent currency transactions are listed with details",
+        "Currency icon or branding is used consistently"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CurrencyBalanceCard.tsx",
+          "operation": "create",
+          "description": "Create a card component that displays the partner's QubeYards currency balance with the generated currency icon from frontend/public/assets/generated/currency-icon.dim_128x128.png. Use large, prominent typography for the balance amount and include QubeYards branding with gold accent colors."
         },
         {
           "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "create",
-          "description": "Create dashboard page that displays hero banner image from frontend/public/assets/generated/hero-banner.dim_1920x600.png and renders PropertyList component. Fetch properties using getProperties backend capability. Use the authorization component to ensure only authenticated users can access this page."
-        },
-        {
-          "path": "frontend/src/hooks/useProperties.ts",
-          "operation": "create",
-          "description": "Create custom hook that fetches properties from backend using getProperties capability with React Query for caching and state management"
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route for /dashboard path that renders DashboardPage component with authentication guard to redirect unauthenticated users to login"
+          "description": "Add the CurrencyBalanceCard component to the dashboard page in a prominent position near the top, alongside or above the property statistics. Show the balance only for authenticated partners with partner role."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useGetQubeYardsBalance query hook that calls actor.getQubeYardsBalance() to fetch the current partner's currency balance. Ensure it is only called when the user is authenticated with partner role."
         }
       ]
     },
     {
-      "id": "REQ-3",
-      "summary": "Implement lead management with add, track, and status update capabilities",
+      "id": "REQ-17",
+      "summary": "Restrict channel partner features so only authenticated users with partner role can access partner-specific functionality",
       "acceptanceCriteria": [
-        "Partners can add new leads with customer name, contact, interested property, and budget",
-        "Lead status can be tracked (new, contacted, site visit scheduled, negotiation, closed)",
-        "Partners can view all their leads in a list"
+        "Partner-specific features require partner role authentication",
+        "Non-partners cannot access partner dashboard sections",
+        "Partner role is assigned during registration or by admin",
+        "Role-based access control is enforced on backend"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/components/AddLeadForm.tsx",
-          "operation": "create",
-          "description": "Create form component to add new leads with customer name field. Use addLead backend capability to submit lead data. Include form validation. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/LeadCard.tsx",
-          "operation": "create",
-          "description": "Create lead card component that displays lead information including customer name, status badge with appropriate styling for each status (new, contacted, inProgress, closed)"
-        },
-        {
-          "path": "frontend/src/components/LeadList.tsx",
-          "operation": "create",
-          "description": "Create lead list component that renders LeadCard components for each lead and integrates AddLeadForm for adding new leads"
-        },
-        {
-          "path": "frontend/src/pages/LeadsPage.tsx",
-          "operation": "create",
-          "description": "Create leads page that renders LeadList component. Fetch leads using getLeads backend capability. Use the authorization component to ensure only authenticated users can access their own leads."
-        },
-        {
-          "path": "frontend/src/hooks/useLeads.ts",
-          "operation": "create",
-          "description": "Create custom hook that fetches leads from backend using getLeads capability with React Query for caching and mutations for adding leads"
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route for /leads path that renders LeadsPage component with authentication guard"
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Create commission tracking dashboard showing earned, pending, and payment history",
-      "acceptanceCriteria": [
-        "Dashboard shows total earned commissions and pending payments",
-        "Partners can see commission breakdown by property/deal",
-        "Payment history is accessible with dates and amounts"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/CommissionSummary.tsx",
-          "operation": "create",
-          "description": "Create commission summary component that displays total earned commissions and pending amounts with visual cards/stats layout"
-        },
-        {
-          "path": "frontend/src/components/CommissionTable.tsx",
-          "operation": "create",
-          "description": "Create commission table component that displays commission breakdown with columns for amount, status, and payment date. Format currency and dates appropriately."
-        },
-        {
-          "path": "frontend/src/pages/CommissionsPage.tsx",
-          "operation": "create",
-          "description": "Create commissions page that renders CommissionSummary and CommissionTable components. Fetch commissions using getCommissions backend capability. Use the authorization component to ensure only authenticated users can access their commission data."
-        },
-        {
-          "path": "frontend/src/hooks/useCommissions.ts",
-          "operation": "create",
-          "description": "Create custom hook that fetches commissions from backend using getCommissions capability with React Query for caching"
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route for /commissions path that renders CommissionsPage component with authentication guard"
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Implement Internet Identity authentication with personalized dashboard access",
-      "acceptanceCriteria": [
-        "Partners can log in using Internet Identity",
-        "Each partner sees only their own data after login",
-        "Unauthenticated users are redirected to login"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "create",
-          "description": "Create login/logout button component using the authorization component's useInternetIdentity hook. Handle login, logout, and clear query cache on logout. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetupModal.tsx",
-          "operation": "create",
-          "description": "Create modal component that prompts new users to complete their profile with name, company name, contact details, and license information. Use saveCallerUserProfile backend capability. Implement proper loading state handling to prevent modal flash as per authorization component guidelines."
-        },
-        {
-          "path": "frontend/src/hooks/useUserProfile.ts",
-          "operation": "create",
-          "description": "Create custom hook that fetches user profile using getCallerUserProfile backend capability with proper loading state management to prevent profile setup modal flash. Follow authorization component pattern for isFetched and isLoading states."
-        },
         {
           "path": "frontend/src/components/AuthGuard.tsx",
-          "operation": "create",
-          "description": "Create authentication guard component that wraps protected routes and redirects unauthenticated users to login page. Use the authorization component's useInternetIdentity hook."
+          "operation": "modify",
+          "description": "Enhance the AuthGuard component to support role-based access by accepting an optional requiredRole prop. When requiredRole is provided, check the user's role via getCallerUserRole() and display an access denied message if the user does not have the required role. Use the authorization component to verify role-checking patterns before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap partner-specific routes (dashboard with currency, leads, commissions) with AuthGuard that requires partner role or admin role. Ensure public routes like News remain accessible without role restrictions."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useGetCallerUserRole query hook that calls actor.getCallerUserRole() to retrieve the current user's role for role-based UI rendering decisions."
+        }
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "summary": "Update branding throughout the application to use QubeYards name, logo, and identity consistently",
+      "acceptanceCriteria": [
+        "App name is QubeYards across all pages",
+        "Navigation and footer display QubeYards branding",
+        "Page titles and metadata reference QubeYards",
+        "Consistent brand identity is maintained"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Replace the current app name and branding with 'QubeYards' throughout the header and footer. Display the generated QubeYards logo from frontend/public/assets/generated/qubeyards-logo.dim_200x80.png in the header navigation. Update footer text to reference QubeYards branding consistently."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Update the page title to 'QubeYards - Premium Real Estate Platform' and add appropriate meta tags referencing QubeYards in the description."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Update the hero banner section to reference QubeYards branding and use the generated luxury hero image from frontend/public/assets/generated/hero-luxury.dim_1920x600.png. Include QubeYards name in prominent hero text."
         },
         {
           "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "create",
-          "description": "Create login page that renders LoginButton component with welcoming messaging and displays partner icon from frontend/public/assets/generated/partner-icon.dim_128x128.png"
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route for /login path and wrap dashboard, leads, and commissions routes with AuthGuard component. Add ProfileSetupModal at app root level to prompt new authenticated users for profile completion."
+          "description": "Update branding references to QubeYards with the logo from frontend/public/assets/generated/qubeyards-logo.dim_200x80.png and ensure all text refers to QubeYards as the platform name."
         }
       ]
     },
     {
-      "id": "REQ-6",
-      "summary": "Apply professional real estate design theme with warm earth tones and clean layouts",
+      "id": "REQ-19",
+      "summary": "Create a modern, premium visual design system for QubeYards with deep teals, golds, and whites",
       "acceptanceCriteria": [
-        "UI uses a cohesive color palette with warm, professional tones",
-        "Layout is clean, organized, and easy to navigate",
-        "Design conveys trust and suits real estate business context"
+        "Color scheme uses premium teal, gold, and white tones",
+        "Typography is clean and professional",
+        "Layout feels luxurious and modern",
+        "Design conveys trust and sophistication",
+        "Visual hierarchy guides user attention effectively"
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Define custom CSS variables for real estate theme with warm earth tones (browns, tans, golds), professional grays, and accent colors. Apply cohesive typography and spacing rules."
+          "description": "Update the CSS custom properties to define a premium color palette featuring deep teal (#0F766E, #115E59), gold (#D97706, #F59E0B), and white (#FFFFFF) tones. Replace the current earth-toned palette with these luxury colors while maintaining the OKLCH color space structure for both light and dark modes."
         },
         {
           "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Extend Tailwind theme with custom colors for real estate brand palette including primary (warm earth tones), secondary, accent, and neutral colors. Configure typography and spacing for professional layouts."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create main layout component with navigation header, sidebar for main sections (Dashboard, Leads, Commissions), and footer. Apply professional real estate styling with clean, organized structure."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wrap all authenticated routes with Layout component to provide consistent navigation and branding across the application"
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Display generated hero banner and property placeholder images as static assets",
-      "acceptanceCriteria": [
-        "Hero banner image is displayed on the main dashboard",
-        "Property placeholder images are used in property listings",
-        "Images load from static assets directory"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "modify",
-          "description": "Add hero section that displays the generated hero banner image from frontend/public/assets/generated/hero-banner.dim_1920x600.png with proper responsive styling and overlay text welcoming partners"
+          "description": "Update the Tailwind configuration to reference the new premium teal and gold color variables. Ensure the color scheme supports sophisticated, modern layouts with proper contrast ratios for accessibility. Add any custom shadows or effects that enhance the luxury aesthetic."
         },
         {
           "path": "frontend/src/components/PropertyCard.tsx",
           "operation": "modify",
-          "description": "Update PropertyCard to display appropriate property placeholder images: frontend/public/assets/generated/property-residential.dim_800x600.png for residential properties and frontend/public/assets/generated/property-commercial.dim_800x600.png for commercial properties based on propertyType field"
+          "description": "Apply the new premium design system with teal and gold accents to property cards. Use clean typography, sophisticated spacing, and professional imagery presentation that conveys luxury real estate branding."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Update the header and footer styling to use the premium teal and gold color palette. Apply clean, modern typography and ensure the layout conveys sophistication and trust consistent with luxury real estate positioning."
         }
       ]
     }

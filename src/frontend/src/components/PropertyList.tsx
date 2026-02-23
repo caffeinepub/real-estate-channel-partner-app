@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import type { Property } from '../backend';
+import type { Property, ProjectStage, TransactionType } from '../backend';
 import PropertyCard from './PropertyCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
+import { useGetPropertiesByProjectStage, useGetPropertiesByTransactionType } from '../hooks/useQueries';
 
 interface PropertyListProps {
   properties: Property[];
@@ -14,12 +15,16 @@ export default function PropertyList({ properties, isLoading }: PropertyListProp
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [projectStageFilter, setProjectStageFilter] = useState<string>('all');
+  const [transactionTypeFilter, setTransactionTypeFilter] = useState<string>('all');
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch = property.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'all' || property.propertyType === typeFilter;
     const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
-    return matchesSearch && matchesType && matchesStatus;
+    const matchesProjectStage = projectStageFilter === 'all' || property.projectStage === projectStageFilter;
+    const matchesTransactionType = transactionTypeFilter === 'all' || property.transactionType === transactionTypeFilter;
+    return matchesSearch && matchesType && matchesStatus && matchesProjectStage && matchesTransactionType;
   });
 
   if (isLoading) {
@@ -43,18 +48,40 @@ export default function PropertyList({ properties, isLoading }: PropertyListProp
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+      <div className="flex flex-col gap-4">
         <h2 className="text-2xl font-bold">Property Listings</h2>
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
+        <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by location..."
+              placeholder="Search by city or state (Pan-India)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>
+          <Select value={transactionTypeFilter} onValueChange={setTransactionTypeFilter}>
+            <SelectTrigger className="w-full sm:w-[160px]">
+              <SelectValue placeholder="Transaction" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Transactions</SelectItem>
+              <SelectItem value="buy">Buy</SelectItem>
+              <SelectItem value="sell">Sell</SelectItem>
+              <SelectItem value="rent">Rent</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={projectStageFilter} onValueChange={setProjectStageFilter}>
+            <SelectTrigger className="w-full sm:w-[160px]">
+              <SelectValue placeholder="Project Stage" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Stages</SelectItem>
+              <SelectItem value="preLaunch">Pre-Launch</SelectItem>
+              <SelectItem value="launch">Launch</SelectItem>
+              <SelectItem value="readyToShift">Ready to Shift</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-full sm:w-[160px]">
               <SelectValue placeholder="Property Type" />
@@ -73,6 +100,7 @@ export default function PropertyList({ properties, isLoading }: PropertyListProp
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="available">Available</SelectItem>
               <SelectItem value="sold">Sold</SelectItem>
+              <SelectItem value="rented">Rented</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -92,4 +120,3 @@ export default function PropertyList({ properties, isLoading }: PropertyListProp
     </div>
   );
 }
-
